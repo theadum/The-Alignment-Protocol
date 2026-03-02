@@ -1,0 +1,184 @@
+:root {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --panel: #161b22;
+  --panel-muted: #1f2937;
+  --text: #f0f6fc;
+  --text-muted: #9aa4b2;
+  --accent: #58a6ff;
+  --success: #3fb950;
+  --danger: #f85149;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.app-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+
+.menu-panel {
+  padding: 1.25rem;
+  border-right: 1px solid #2a3240;
+  background: var(--panel);
+}
+
+.menu-panel h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+}
+
+.menu-panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.menu-panel ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menu-item {
+  width: 100%;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: var(--text);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  text-align: left;
+}
+
+.menu-item.active {
+  border-color: var(--accent);
+  background: #172033;
+}
+
+.menu-item:disabled {
+  opacity: 0.55;
+}
+
+.stats-block {
+  margin-top: 1.2rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #2a3240;
+}
+
+.stats-block h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.stats-block p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.game-panel {
+  padding: 1.5rem;
+}
+
+.currency-display {
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid #2a3240;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.currency-display h2 {
+  margin: 0;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+#knowledgeValue {
+  margin: 0.25rem 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+#knowledgePerSecond {
+  margin: 0;
+  color: var(--success);
+}
+
+.buyables-panel {
+  background: var(--panel);
+  border: 1px solid #2a3240;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.buyables-panel h3 {
+  margin: 0 0 1rem;
+}
+
+.buyable {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel-muted);
+  border: 1px solid #2a3240;
+  border-radius: 0.6rem;
+  padding: 0.85rem;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.buyable h4 {
+  margin: 0 0 0.25rem;
+}
+
+.buyable p {
+  margin: 0.1rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.buy-button {
+  border: 1px solid #35527a;
+  background: #1a2d44;
+  color: var(--text);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  font-weight: 600;
+}
+
+.buy-button:disabled {
+  border-color: #434c5d;
+  background: #222b38;
+  color: #808a98;
+}
+
+@media (max-width: 900px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-panel {
+    border-right: 0;
+    border-bottom: 1px solid #2a3240;
+  }
+
+  .buyable {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Alignment Protocol — Phase I: Research Era</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="menu-panel">
+        <h1>The Alignment Protocol</h1>
+        <h2>Menu</h2>
+        <ul>
+          <li><button class="menu-item active" type="button">Phase I: Research Era</button></li>
+          <li><button class="menu-item" type="button" disabled>Phase II: Expansion (Locked)</button></li>
+          <li><button class="menu-item" type="button" disabled>Prestige (Locked)</button></li>
+        </ul>
+
+        <section class="stats-block">
+          <h3>Run Stats</h3>
+          <p>Time Played (Run): <span id="timePlayedRun">0.0s</span></p>
+          <p>Time Since Prestige: <span id="timeSincePrestige">0.0s</span></p>
+        </section>
+
+        <section class="stats-block">
+          <h3>Lifetime Stats</h3>
+          <p>Total Time Played: <span id="totalTimePlayed">0.0s</span></p>
+          <p>Total Knowledge Earned: <span id="totalKnowledgeEarned">0</span></p>
+          <p>Total Prestiges: <span id="totalPrestiges">0</span></p>
+        </section>
+      </aside>
+
+      <main class="game-panel">
+        <section class="currency-display">
+          <h2>Knowledge</h2>
+          <p id="knowledgeValue">0</p>
+          <p id="knowledgePerSecond">+1.0 / second</p>
+        </section>
+
+        <section class="buyables-panel">
+          <h3>Research Investments</h3>
+
+          <article class="buyable" data-upgrade-id="labNotes">
+            <div>
+              <h4>Lab Notes</h4>
+              <p>Improves your understanding by +1.0 knowledge/sec.</p>
+              <p>Owned: <span class="owned-count">0</span></p>
+            </div>
+            <button class="buy-button" type="button">Buy (<span class="cost">10</span>)</button>
+          </article>
+
+          <article class="buyable" data-upgrade-id="graduateAssistants">
+            <div>
+              <h4>Graduate Assistants</h4>
+              <p>Supports experiments by +5.0 knowledge/sec.</p>
+              <p>Owned: <span class="owned-count">0</span></p>
+            </div>
+            <button class="buy-button" type="button">Buy (<span class="cost">75</span>)</button>
+          </article>
+
+          <article class="buyable" data-upgrade-id="computeCluster">
+            <div>
+              <h4>Compute Cluster</h4>
+              <p>Automates model trials by +20.0 knowledge/sec.</p>
+              <p>Owned: <span class="owned-count">0</span></p>
+            </div>
+            <button class="buy-button" type="button">Buy (<span class="cost">400</span>)</button>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

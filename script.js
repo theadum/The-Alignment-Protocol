@@ -1,5 +1,6 @@
 const gameState = {
   knowledge: 0,
+  baseKnowledgePerSecond: 1,
   run: {
     timePlayedSeconds: 0,
     knowledgeEarned: 0,
@@ -10,26 +11,27 @@ const gameState = {
     totalPrestiges: 0,
     totalTimeSincePrestigeSeconds: 0,
   },
-  generators: {
-    labNotes: 0,
-    graduateAssistants: 0,
-    computeClusters: 0,
-  },
-  buyables: {
+  upgrades: {
     labNotes: {
-      baseCost: 100,
-      costMultiplier: 1.1,
-      unlockWhen: () => true,
+      name: 'Lab Notes',
+      owned: 0,
+      baseCost: 10,
+      costMultiplier: 1.18,
+      gainPerSecond: 1,
     },
     graduateAssistants: {
-      baseCost: 10_000,
-      costMultiplier: 1.1,
-      unlockWhen: () => gameState.generators.labNotes >= 10,
+      name: 'Graduate Assistants',
+      owned: 0,
+      baseCost: 75,
+      costMultiplier: 1.22,
+      gainPerSecond: 5,
     },
-    computeClusters: {
-      baseCost: 1_000_000,
-      costMultiplier: 1.1,
-      unlockWhen: () => gameState.generators.graduateAssistants >= 10,
+    computeCluster: {
+      name: 'Compute Cluster',
+      owned: 0,
+      baseCost: 400,
+      costMultiplier: 1.28,
+      gainPerSecond: 20,
     },
   },
 };
@@ -37,7 +39,6 @@ const gameState = {
 const elements = {
   knowledgeValue: document.getElementById('knowledgeValue'),
   knowledgePerSecond: document.getElementById('knowledgePerSecond'),
-  generatorChain: document.getElementById('generatorChain'),
   timePlayedRun: document.getElementById('timePlayedRun'),
   timeSincePrestige: document.getElementById('timeSincePrestige'),
   totalTimePlayed: document.getElementById('totalTimePlayed'),
@@ -46,13 +47,17 @@ const elements = {
   buyables: [...document.querySelectorAll('.buyable')],
 };
 
-function getBuyableCost(id) {
-  const buyable = gameState.buyables[id];
-  return Math.floor(buyable.baseCost * buyable.costMultiplier ** gameState.generators[id]);
+function getUpgradeCost(upgrade) {
+  return Math.floor(upgrade.baseCost * upgrade.costMultiplier ** upgrade.owned);
 }
 
 function getKnowledgePerSecond() {
-  return gameState.generators.labNotes;
+  const fromUpgrades = Object.values(gameState.upgrades).reduce(
+    (sum, upgrade) => sum + upgrade.owned * upgrade.gainPerSecond,
+    0
+  );
+
+  return gameState.baseKnowledgePerSecond + fromUpgrades;
 }
 
 function formatNumber(value) {
@@ -66,25 +71,19 @@ function formatTime(seconds) {
 function refreshBuyableUI() {
   elements.buyables.forEach((buyableEl) => {
     const id = buyableEl.dataset.upgradeId;
-    const unlocked = gameState.buyables[id].unlockWhen();
-    const cost = getBuyableCost(id);
+    const upgrade = gameState.upgrades[id];
+    const cost = getUpgradeCost(upgrade);
     const button = buyableEl.querySelector('.buy-button');
 
-    buyableEl.classList.toggle('locked', !unlocked);
-    buyableEl.querySelector('.owned-count').textContent = formatNumber(gameState.generators[id]);
-    buyableEl.querySelector('.cost').textContent = formatNumber(cost);
-    button.disabled = !unlocked || gameState.knowledge < cost;
+    buyableEl.querySelector('.owned-count').textContent = `${upgrade.owned}`;
+    buyableEl.querySelector('.cost').textContent = `${formatNumber(cost)}`;
+    button.disabled = gameState.knowledge < cost;
   });
 }
 
 function refreshStatsUI() {
   elements.knowledgeValue.textContent = formatNumber(gameState.knowledge);
   elements.knowledgePerSecond.textContent = `+${formatNumber(getKnowledgePerSecond())} / second`;
-  elements.generatorChain.textContent = `Lab Notes: ${formatNumber(
-    gameState.generators.labNotes
-  )} | Graduate Assistants: ${formatNumber(
-    gameState.generators.graduateAssistants
-  )} | Compute Clusters: ${formatNumber(gameState.generators.computeClusters)}`;
 
   elements.timePlayedRun.textContent = formatTime(gameState.run.timePlayedSeconds);
   elements.timeSincePrestige.textContent = formatTime(
@@ -97,15 +96,16 @@ function refreshStatsUI() {
   elements.totalPrestiges.textContent = `${gameState.lifetime.totalPrestiges}`;
 }
 
-function buy(id) {
-  const cost = getBuyableCost(id);
+function buyUpgrade(upgradeId) {
+  const upgrade = gameState.upgrades[upgradeId];
+  const cost = getUpgradeCost(upgrade);
 
-  if (!gameState.buyables[id].unlockWhen() || gameState.knowledge < cost) {
+  if (gameState.knowledge < cost) {
     return;
   }
 
   gameState.knowledge -= cost;
-  gameState.generators[id] += 1;
+  upgrade.owned += 1;
 
   refreshBuyableUI();
   refreshStatsUI();
@@ -113,7 +113,7 @@ function buy(id) {
 
 elements.buyables.forEach((buyableEl) => {
   buyableEl.querySelector('.buy-button').addEventListener('click', () => {
-    buy(buyableEl.dataset.upgradeId);
+    buyUpgrade(buyableEl.dataset.upgradeId);
   });
 });
 
@@ -123,18 +123,12 @@ function gameLoop(nowMs) {
   const deltaSeconds = (nowMs - previousTickMs) / 1000;
   previousTickMs = nowMs;
 
-  const knowledgeGain = gameState.generators.labNotes * deltaSeconds;
-  const labNotesGain = gameState.generators.graduateAssistants * deltaSeconds;
-  const graduateGain = gameState.generators.computeClusters * deltaSeconds;
-
-  gameState.knowledge += knowledgeGain;
-  gameState.generators.labNotes += labNotesGain;
-  gameState.generators.graduateAssistants += graduateGain;
-
-  gameState.run.knowledgeEarned += knowledgeGain;
+  const gain = getKnowledgePerSecond() * deltaSeconds;
+  gameState.knowledge += gain;
+  gameState.run.knowledgeEarned += gain;
   gameState.run.timePlayedSeconds += deltaSeconds;
 
-  gameState.lifetime.totalKnowledgeEarned += knowledgeGain;
+  gameState.lifetime.totalKnowledgeEarned += gain;
   gameState.lifetime.totalTimePlayedSeconds += deltaSeconds;
   gameState.lifetime.totalTimeSincePrestigeSeconds += deltaSeconds;
 
